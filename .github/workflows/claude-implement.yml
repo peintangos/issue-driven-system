@@ -27,10 +27,8 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          model: claude-sonnet-4-6
-          timeout_minutes: 60
-          allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
-          direct_prompt: |
+          claude_args: "--model claude-sonnet-4-6 --max-turns 50 --allowedTools Bash Read Write Edit Glob Grep"
+          prompt: |
             あなたはGitHub Issueに基づいて自律的に実装を行うエージェントです。
 
             ## 対象Issue
