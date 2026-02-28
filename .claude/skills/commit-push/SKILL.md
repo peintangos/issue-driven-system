@@ -38,7 +38,7 @@ allowed-tools: Bash
 4. **コミット＆push**: 承認されたら以下を実行する
    - 対象ファイルを `git add` でステージング（`git add .` は避け、ファイル名を明示する）
    - `.env` や認証情報などの機密ファイルが含まれていないか確認する
-   - `git commit` でコミット（Co-Authored-Byを付与）
+   - `git commit` でコミット
    - `git push` でリモートにpush
 
 ## ルール
@@ -47,9 +47,5 @@ allowed-tools: Bash
 - `.env`、認証情報、シークレットなどの機密ファイルはコミットしない。含まれていたら警告する
 - `git add .` や `git add -A` は使わず、ファイルを明示的に指定する
 - force pushは行わない。必要な場合はユーザーに確認する
-- コミットメッセージの末尾に以下を付与する：
-  ```
-  Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
-  ```
 - push後はコミットハッシュとpush先を表示する
 - push先のリモートブランチが存在しない場合は `-u origin [branch]` を使う
