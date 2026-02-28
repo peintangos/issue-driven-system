@@ -1,0 +1,74 @@
+name: Claude Implement
+
+on:
+  issues:
+    types: [labeled]
+
+concurrency:
+  group: claude-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  implement:
+    if: github.event.label.name == 'claude:implement'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: claude-sonnet-4-6
+          timeout_minutes: 60
+          allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
+          direct_prompt: |
+            あなたはGitHub Issueに基づいて自律的に実装を行うエージェントです。
+
+            ## 対象Issue
+
+            Issue #${{ github.event.issue.number }}: ${{ github.event.issue.title }}
+
+            ## 手順
+
+            1. Issueの内容を読み、実装対象を理解する
+            2. `docs/specifications/` から関連する仕様を特定する（存在する場合）
+            3. `issue-${{ github.event.issue.number }}` ブランチを作成する
+            4. 実装とテストを作成する
+            5. テスト・ビルドチェックを実行する（スクリプトが存在する場合）
+            6. PRを作成する
+
+            ## PRの構成
+
+            PRの本文は以下の構成で作成すること:
+
+            ```
+            ## Summary
+            [実装内容の要約（箇条書き）]
+
+            ## 変更点
+            [変更したファイルと内容]
+
+            ## テスト
+            [実行したテストと結果]
+
+            ## 確認事項
+            [判断に迷った点があれば記載。なければ「なし」]
+
+            Closes #${{ github.event.issue.number }}
+            ```
+
+            ## ルール
+
+            - main ブランチに直接コミットしない
+            - テストが通ることを確認してからPRを作成する
+            - 不明点が多い場合はIssueにコメントで質問し、以下のコマンドで `claude:waiting` ラベルを付与する:
+              `gh issue edit ${{ github.event.issue.number }} --add-label "claude:waiting"`
+            - コミットメッセージは Conventional Commits 形式（prefix は英語、本文は日本語）
